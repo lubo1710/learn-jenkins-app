@@ -5,11 +5,15 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
+                    // Smaller image than a regular linux image
                     image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
+                /* I am still unsure what ci does
+                But somehow that is intereting
+                */
                 sh '''
                     ls -la
                     node --version
@@ -32,6 +36,23 @@ pipeline {
                 sh '''
                     test -f build/index.html
                     npm test
+                '''
+            }
+        }
+    }
+
+    stage('E2E') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.58.2-noble'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    npm install -g serve
+                    serve -s build
+                    npx playwright test
                 '''
             }
         }
