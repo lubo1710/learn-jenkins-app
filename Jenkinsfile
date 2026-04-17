@@ -30,9 +30,7 @@ pipeline {
             }
             steps {
                 sh '''
-                    pwd
-                    cd /build/
-                    ls -la index.html
+                    test -f build/index.html
                     npm test
                 '''
             }
